@@ -1,0 +1,163 @@
+---
+title: "Demographic in formal USSR countries"
+output: html_notebook
+---
+###Idea
+The idea of this project was to investigate demographic changes in formal USSR countries. If there are any common patterns or few of them, or every country has it's own specific situation in independence period.
+
+```{r}
+library(readxl)
+library(ggplot2)
+library(reshape)
+```
+
+
+
+```{r}
+DATA_PATH <- "./populationbycountry19802010millions.csv"
+pop_country <- read.csv(DATA_PATH, header = TRUE)
+
+#some 'constants' for data cleaning
+ussr_countries <- c("Armenia", "Azerbaijan", "Belarus", "Estonia", "Georgia", "Kazakhstan", "Kyrgyzstan", "Kyrgyz Republic", "Latvia", "Lithuania", "Moldova", "Russia", "Russian Federation", "Tajikistan", "Turkmenistan", "Ukraine", "Uzbekistan")
+ussr_countries1 <- c( "Azerbaijan", "Kyrgyzstan", "Kyrgyz Republic", "Tajikistan", "Turkmenistan", "Uzbekistan")
+
+years5 <-c("X1950", "X1955","X1960", "X1965","X1970", "X1975","X1980", "X1985",  "X1990",  "X1995", "X2000", "X2005", "X2010", "X2015")
+years <-c("X1980", "X1981", "X1982", "X1983", "X1984", "X1985", "X1986", "X1987", "X1988", "X1989", "X1990", "X1991", "X1992", "X1993", "X1994", "X1995", "X1996", "X1997", "X1998", "X1999", "X2000", "X2001", "X2002", "X2003", "X2004", "X2005", "X2006", "X2007", "X2008", "X2009", "X2010")
+years6018 <-c("X1960", "X1961", "X1962", "X1963", "X1964", "X1965", "X1966", "X1967", "X1968", "X1969", "X1970", "X1971", "X1972", "X1973", "X1974", "X1975", "X1976", "X1977", "X1978", "X1979", "X1980", "X1981", "X1982", "X1983", "X1984", "X1985", "X1986", "X1987", "X1988", "X1989", "X1990", "X1991", "X1992", "X1993", "X1994", "X1995", "X1996", "X1997", "X1998", "X1999", "X2000", "X2001", "X2002", "X2003", "X2004", "X2005", "X2006", "X2007", "X2008", "X2009", "X2010", "X2011", "X2012", "X2013", "X2014", "X2015", "X2016", "X2017")
+```
+
+```{r}
+#loading Life Expectancy data
+DATA_PATH_DUR <- "./API_SP.DYN.LE00.IN_DS2_en_csv_v2_10576744/API_SP.DYN.LE00.IN_DS2_en_csv_v2_10576744.csv"
+life_exp <- read.csv(DATA_PATH_DUR, header = TRUE)
+
+le_ussr <- life_exp[is.element(life_exp$Country.Name, ussr_countries),]
+le_ussr_low <- le_ussr[!is.element(le_ussr$Country.Name, ussr_countries1),]
+le_ussr_high <- le_ussr[is.element(le_ussr$Country.Name, ussr_countries1),]
+```
+
+```{r}
+#loading sex rate data ()
+DATA_PATH_SR <- "./sex_rate.csv"
+sex_rate <- read.csv(DATA_PATH_SR, header = TRUE)
+sex_rate$country <- as.character(sex_rate$Region..subregion..country.or.area..)
+sex_rate$Region..subregion..country.or.area.. <- NULL
+
+sex_rate_ussr <- sex_rate[is.element(sex_rate$country, ussr_countries),]
+sex_rate_ussr_low <- sex_rate_ussr[!is.element(sex_rate_ussr$country, ussr_countries1),]
+sex_rate_ussr_high <- sex_rate_ussr[is.element(sex_rate_ussr$country, ussr_countries1),]
+```
+
+
+```{r}
+ussr <- pop_country[c(97:112),]
+ussr <- ussr[-c(5),]
+#ussr <- ussr[-c(11),]
+countries <- pop_country[as.numeric(as.character(pop_country$X1992)) > as.numeric(as.character(pop_country$X2010)),]
+ussr_low <- ussr[as.numeric(as.character(ussr$X1992)) > as.numeric(as.character(ussr$X2010)),]
+ussr_high <- ussr[as.numeric(as.character(ussr$X1992)) < as.numeric(as.character(ussr$X2010)),]
+```
+
+
+```{r}
+df <- melt(ussr_low,measure.vars=years,variable_name = "year")
+df$value <- as.numeric(levels(df$value))[df$value]
+#dfU <- df[df$X == "Ukraine",]df_reduced$date_str <- paste(df_reduced$dec,df_reduced$month,sep="0-")
+df$date_str <- paste(sub('.', '', df$year),"01-01",sep="-")
+df$year <- as.Date(df$date_str,format="%Y-%m-%d")
+
+df<- df[!is.na(df$value),]
+
+ggplot(df, aes(x=year, y= value, color = X)) +
+  geom_line() +
+  geom_vline(xintercept = 1991) +
+  facet_wrap(~X, ncol = 4,scales = "free_y")
+```
+
+
+```{r}
+df <- melt(le_ussr_low,measure.vars=years6018,variable_name = "year")
+#df$value <- as.numeric(levels(df$value))[df$value]
+#dfU <- df[df$X == "Ukraine",]df_reduced$date_str <- paste(df_reduced$dec,df_reduced$month,sep="0-")
+df$date_str <- paste(sub('.', '', df$year),"01-01",sep="-")
+df$year <- as.Date(df$date_str,format="%Y-%m-%d")
+
+df<- df[!is.na(df$value),]
+df$Country.Name <- as.character(df$Country.Name)
+ggplot(df, aes(x=year, y= value, color = Country.Name)) +
+  geom_line() +
+  geom_vline(xintercept = as.Date("1991-01-01")) +
+  facet_wrap(~Country.Name, ncol = 3,scales = "free_y")
+```
+
+```{r}
+df <- melt(sex_rate_ussr_low,measure.vars=years5,variable_name = "year")
+#df$value <- as.numeric(levels(df$value))[df$value]
+#dfU <- df[df$X == "Ukraine",]df_reduced$date_str <- paste(df_reduced$dec,df_reduced$month,sep="0-")
+df$date_str <- paste(sub('.', '', df$year),"01-01",sep="-")
+df$year <- as.Date(df$date_str,format="%Y-%m-%d")
+
+df<- df[!is.na(df$value),]
+ggplot(df, aes(x=year, y= value, color = country)) +
+  geom_line() +
+  geom_vline(xintercept = as.Date("1991-01-01")) +
+  facet_wrap(~country, ncol = 3,scales = "free_y")
+```
+
+
+
+```{r}
+df <- melt(ussr_high,measure.vars=years,variable_name = "year")
+df$value <- as.numeric(levels(df$value))[df$value]
+#dfU <- df[df$X == "Ukraine",]df_reduced$date_str <- paste(df_reduced$dec,df_reduced$month,sep="0-")
+df$date_str <- paste(sub('.', '', df$year),"01-01",sep="-")
+df$year <- as.Date(df$date_str,format="%Y-%m-%d")
+
+df<- df[!is.na(df$value),]
+
+ggplot(df, aes(x=year, y= value, color = X)) +
+  geom_line() +
+  geom_vline(xintercept = as.Date("1991-01-01")) +
+  facet_wrap(~X, ncol = 2,scales = "free_y")
+```
+
+```{r}
+df <- melt(le_ussr_high,measure.vars=years6018,variable_name = "year")
+#df$value <- as.numeric(levels(df$value))[df$value]
+#dfU <- df[df$X == "Ukraine",]df_reduced$date_str <- paste(df_reduced$dec,df_reduced$month,sep="0-")
+df$date_str <- paste(sub('.', '', df$year),"01-01",sep="-")
+df$year <- as.Date(df$date_str,format="%Y-%m-%d")
+
+df<- df[!is.na(df$value),]
+df$Country.Name <- as.character(df$Country.Name)
+ggplot(df, aes(x=year, y= value, color = Country.Name)) +
+  geom_line() +
+  geom_vline(xintercept = as.Date("1991-01-01")) 
+#  facet_wrap(~Country.Name, ncol = 2,scales = "free_y")
+```
+
+```{r}
+df <- melt(sex_rate_ussr_high,measure.vars=years5,variable_name = "year")
+#df$value <- as.numeric(levels(df$value))[df$value]
+#dfU <- df[df$X == "Ukraine",]df_reduced$date_str <- paste(df_reduced$dec,df_reduced$month,sep="0-")
+df$date_str <- paste(sub('.', '', df$year),"01-01",sep="-")
+df$year <- as.Date(df$date_str,format="%Y-%m-%d")
+
+df<- df[!is.na(df$value),]
+ggplot(df, aes(x=year, y= value, color = country)) +
+  geom_line() +
+  geom_vline(xintercept = as.Date("1991-01-01")) +
+  facet_wrap(~country, ncol = 2,scales = "free_y")
+```
+
+
+
+
+
+
+```{r}
+png(filename = "~/Desktop/UCU/dv/fin/test_plot.png",width = 500,height = 1000, units='mm', res = 300)
+plot1
+
+dev.off()
+```
