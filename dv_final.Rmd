@@ -55,11 +55,11 @@ ussr_low <- ussr[as.numeric(as.character(ussr$X1992)) > as.numeric(as.character(
 ussr_high <- ussr[as.numeric(as.character(ussr$X1992)) < as.numeric(as.character(ussr$X2010)),]
 ```
 
+# First group
 
 ```{r}
 df <- melt(ussr_low,measure.vars=years,variable_name = "year")
 df$value <- as.numeric(levels(df$value))[df$value]
-#dfU <- df[df$X == "Ukraine",]df_reduced$date_str <- paste(df_reduced$dec,df_reduced$month,sep="0-")
 df$date_str <- paste(sub('.', '', df$year),"01-01",sep="-")
 df$year <- as.Date(df$date_str,format="%Y-%m-%d")
 
@@ -68,7 +68,14 @@ df<- df[!is.na(df$value),]
 ggplot(df, aes(x=year, y= value, color = X)) +
   geom_line() +
   geom_vline(xintercept = 1991) +
-  facet_wrap(~X, ncol = 4,scales = "free_y")
+  facet_wrap(~X, ncol = 4,scales = "free_y") +
+  labs(title = "Total population", subtitle = "In millions" ) +
+  ylab("total population") +
+  theme(
+        plot.title = element_text(size = 25,face = "bold"),
+        plot.subtitle = element_text(size = 15,face = "bold"),
+        legend.position = "none"
+        ) 
 ```
 
 
@@ -84,7 +91,14 @@ df$Country.Name <- as.character(df$Country.Name)
 ggplot(df, aes(x=year, y= value, color = Country.Name)) +
   geom_line() +
   geom_vline(xintercept = as.Date("1991-01-01")) +
-  facet_wrap(~Country.Name, ncol = 3,scales = "free_y")
+  facet_wrap(~Country.Name, ncol = 3,scales = "free_y") +
+  labs(title = "Life Expectation", subtitle = "In years" ) +
+  ylab("LE") +
+  theme(
+        plot.title = element_text(size = 25,face = "bold"),
+        plot.subtitle = element_text(size = 15,face = "bold"),
+        legend.position = "none"
+        ) 
 ```
 
 ```{r}
@@ -98,15 +112,21 @@ df<- df[!is.na(df$value),]
 ggplot(df, aes(x=year, y= value, color = country)) +
   geom_line() +
   geom_vline(xintercept = as.Date("1991-01-01")) +
-  facet_wrap(~country, ncol = 3,scales = "free_y")
+  facet_wrap(~country, ncol = 3,scales = "free_y") +
+  labs(title = "Sex Rate", subtitle = "number of males per 100 females" ) +
+  ylab("sex rate") +
+  theme(
+        plot.title = element_text(size = 25,face = "bold"),
+        plot.subtitle = element_text(size = 15,face = "bold"),
+        legend.position = "none"
+        ) 
 ```
 
-
+# Second group
 
 ```{r}
 df <- melt(ussr_high,measure.vars=years,variable_name = "year")
 df$value <- as.numeric(levels(df$value))[df$value]
-#dfU <- df[df$X == "Ukraine",]df_reduced$date_str <- paste(df_reduced$dec,df_reduced$month,sep="0-")
 df$date_str <- paste(sub('.', '', df$year),"01-01",sep="-")
 df$year <- as.Date(df$date_str,format="%Y-%m-%d")
 
@@ -115,7 +135,14 @@ df<- df[!is.na(df$value),]
 ggplot(df, aes(x=year, y= value, color = X)) +
   geom_line() +
   geom_vline(xintercept = as.Date("1991-01-01")) +
-  facet_wrap(~X, ncol = 2,scales = "free_y")
+  facet_wrap(~X, ncol = 2,scales = "free_y") +
+  labs(title = "Total population", subtitle = "In millions" ) +
+  ylab("total population") +
+  theme(
+        plot.title = element_text(size = 25,face = "bold"),
+        plot.subtitle = element_text(size = 15,face = "bold"),
+        legend.position = "none"
+        ) 
 ```
 
 ```{r}
@@ -129,14 +156,17 @@ df<- df[!is.na(df$value),]
 df$Country.Name <- as.character(df$Country.Name)
 ggplot(df, aes(x=year, y= value, color = Country.Name)) +
   geom_line() +
-  geom_vline(xintercept = as.Date("1991-01-01")) 
-#  facet_wrap(~Country.Name, ncol = 2,scales = "free_y")
+  geom_vline(xintercept = as.Date("1991-01-01")) +
+  labs(title = "Life Expectation", subtitle = "In years" ) +
+  ylab("LE") +
+  theme(
+        plot.title = element_text(size = 25,face = "bold"),
+        plot.subtitle = element_text(size = 15,face = "bold")
+        )  
 ```
 
 ```{r}
 df <- melt(sex_rate_ussr_high,measure.vars=years5,variable_name = "year")
-#df$value <- as.numeric(levels(df$value))[df$value]
-#dfU <- df[df$X == "Ukraine",]df_reduced$date_str <- paste(df_reduced$dec,df_reduced$month,sep="0-")
 df$date_str <- paste(sub('.', '', df$year),"01-01",sep="-")
 df$year <- as.Date(df$date_str,format="%Y-%m-%d")
 
@@ -144,17 +174,16 @@ df<- df[!is.na(df$value),]
 ggplot(df, aes(x=year, y= value, color = country)) +
   geom_line() +
   geom_vline(xintercept = as.Date("1991-01-01")) +
-  facet_wrap(~country, ncol = 2,scales = "free_y")
+  facet_wrap(~country, ncol = 2,scales = "free_y") +
+  labs(title = "Sex Rate", subtitle = "number of males per 100 females" ) +
+  ylab("sex rate") +
+  theme(
+        plot.title = element_text(size = 25,face = "bold"),
+        plot.subtitle = element_text(size = 15,face = "bold"),
+        legend.position = "none"
+        )
 ```
 
 
 
 
-
-
-```{r}
-png(filename = "~/Desktop/UCU/dv/fin/test_plot.png",width = 500,height = 1000, units='mm', res = 300)
-plot1
-
-dev.off()
-```
