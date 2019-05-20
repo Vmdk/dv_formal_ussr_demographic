@@ -22,6 +22,7 @@ ussr_countries1 <- c( "Azerbaijan", "Kyrgyzstan", "Kyrgyz Republic", "Tajikistan
 years5 <-c("X1950", "X1955","X1960", "X1965","X1970", "X1975","X1980", "X1985",  "X1990",  "X1995", "X2000", "X2005", "X2010", "X2015")
 years <-c("X1980", "X1981", "X1982", "X1983", "X1984", "X1985", "X1986", "X1987", "X1988", "X1989", "X1990", "X1991", "X1992", "X1993", "X1994", "X1995", "X1996", "X1997", "X1998", "X1999", "X2000", "X2001", "X2002", "X2003", "X2004", "X2005", "X2006", "X2007", "X2008", "X2009", "X2010")
 years6018 <-c("X1960", "X1961", "X1962", "X1963", "X1964", "X1965", "X1966", "X1967", "X1968", "X1969", "X1970", "X1971", "X1972", "X1973", "X1974", "X1975", "X1976", "X1977", "X1978", "X1979", "X1980", "X1981", "X1982", "X1983", "X1984", "X1985", "X1986", "X1987", "X1988", "X1989", "X1990", "X1991", "X1992", "X1993", "X1994", "X1995", "X1996", "X1997", "X1998", "X1999", "X2000", "X2001", "X2002", "X2003", "X2004", "X2005", "X2006", "X2007", "X2008", "X2009", "X2010", "X2011", "X2012", "X2013", "X2014", "X2015", "X2016", "X2017")
+
 ```
 
 ```{r}
@@ -81,8 +82,6 @@ ggplot(df, aes(x=year, y= value, color = X)) +
 
 ```{r}
 df <- melt(le_ussr_low,measure.vars=years6018,variable_name = "year")
-#df$value <- as.numeric(levels(df$value))[df$value]
-#dfU <- df[df$X == "Ukraine",]df_reduced$date_str <- paste(df_reduced$dec,df_reduced$month,sep="0-")
 df$date_str <- paste(sub('.', '', df$year),"01-01",sep="-")
 df$year <- as.Date(df$date_str,format="%Y-%m-%d")
 
@@ -102,9 +101,7 @@ ggplot(df, aes(x=year, y= value, color = Country.Name)) +
 ```
 
 ```{r}
-df <- melt(sex_rate_ussr_low,measure.vars=years5,variable_name = "year")
-#df$value <- as.numeric(levels(df$value))[df$value]
-#dfU <- df[df$X == "Ukraine",]df_reduced$date_str <- paste(df_reduced$dec,df_reduced$month,sep="0-")
+df <- melt(sex_rate_ussr_low,measure.vars=years5,variable_name = "year") 
 df$date_str <- paste(sub('.', '', df$year),"01-01",sep="-")
 df$year <- as.Date(df$date_str,format="%Y-%m-%d")
 
@@ -147,8 +144,6 @@ ggplot(df, aes(x=year, y= value, color = X)) +
 
 ```{r}
 df <- melt(le_ussr_high,measure.vars=years6018,variable_name = "year")
-#df$value <- as.numeric(levels(df$value))[df$value]
-#dfU <- df[df$X == "Ukraine",]df_reduced$date_str <- paste(df_reduced$dec,df_reduced$month,sep="0-")
 df$date_str <- paste(sub('.', '', df$year),"01-01",sep="-")
 df$year <- as.Date(df$date_str,format="%Y-%m-%d")
 
@@ -156,7 +151,8 @@ df<- df[!is.na(df$value),]
 df$Country.Name <- as.character(df$Country.Name)
 ggplot(df, aes(x=year, y= value, color = Country.Name)) +
   geom_line() +
-  geom_vline(xintercept = as.Date("1991-01-01")) +
+  geom_vline(xintercept = as.Date("1991-12-26")) +
+  annotate("text", x = as.Date("1996-05-26"), y = 56, label="26/12/1991",size=3.4) +
   labs(title = "Life Expectation", subtitle = "In years" ) +
   ylab("LE") +
   theme(
@@ -174,13 +170,12 @@ df<- df[!is.na(df$value),]
 ggplot(df, aes(x=year, y= value, color = country)) +
   geom_line() +
   geom_vline(xintercept = as.Date("1991-01-01")) +
-  facet_wrap(~country, ncol = 2,scales = "free_y") +
+  annotate("text", x = as.Date("1996-05-26"), y = 89, label="26/12/1991",size=3.4) +
   labs(title = "Sex Rate", subtitle = "number of males per 100 females" ) +
   ylab("sex rate") +
   theme(
         plot.title = element_text(size = 25,face = "bold"),
-        plot.subtitle = element_text(size = 15,face = "bold"),
-        legend.position = "none"
+        plot.subtitle = element_text(size = 15,face = "bold")
         )
 ```
 
