@@ -12,7 +12,7 @@ library(reshape)
 
 
 ```{r}
-DATA_PATH <- "./populationbycountry19802010millions.csv"
+DATA_PATH <- "./data/populationbycountry19802010millions.csv"
 pop_country <- read.csv(DATA_PATH, header = TRUE)
 
 #some 'constants' for data cleaning
@@ -27,7 +27,7 @@ years6018 <-c("X1960", "X1961", "X1962", "X1963", "X1964", "X1965", "X1966", "X1
 
 ```{r}
 #loading Life Expectancy data
-DATA_PATH_DUR <- "./API_SP.DYN.LE00.IN_DS2_en_csv_v2_10576744/API_SP.DYN.LE00.IN_DS2_en_csv_v2_10576744.csv"
+DATA_PATH_DUR <- "./data/Life_Expectancy.csv"
 life_exp <- read.csv(DATA_PATH_DUR, header = TRUE)
 
 le_ussr <- life_exp[is.element(life_exp$Country.Name, ussr_countries),]
@@ -37,7 +37,7 @@ le_ussr_high <- le_ussr[is.element(le_ussr$Country.Name, ussr_countries1),]
 
 ```{r}
 #loading sex rate data
-DATA_PATH_SR <- "./sex_rate.csv"
+DATA_PATH_SR <- "./data/sex_rate.csv"
 sex_rate <- read.csv(DATA_PATH_SR, header = TRUE)
 sex_rate$country <- as.character(sex_rate$Region..subregion..country.or.area..)
 sex_rate$Region..subregion..country.or.area.. <- NULL
